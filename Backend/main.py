@@ -28,7 +28,7 @@ app.add_middleware(
     allow_headers=["*"],              # allow all headers
 )
 
-list = ["Äpfel", "Birne", "Erdbeere"]
+list = []
 
 
 @app.get("/")
@@ -45,7 +45,14 @@ async def getOneItem(id):
     return list[int(id)]
 
 @app.put("/put")
-async def putItem(request : Request):
+async def putItem(request : Request):    
     data = await request.json()
     list.append(data["name"])
+    return list
+
+@app.delete("/delete")
+async def deleteItem():
+    if len(list) == 0:
+        return list
+    list.pop()
     return list

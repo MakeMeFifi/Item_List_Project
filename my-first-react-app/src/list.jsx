@@ -22,12 +22,24 @@ function List() {
             .then(response => response.json())
             .then(data => {
                     addItem(data)
+                    setInput("")
             })
         }
     }
 
     function setAllData() {
         fetch("http://127.0.0.1:8000/items")
+        .then(response => response.json())
+        .then(data => addItem(data))
+    }
+
+    function deleteLastItem() {
+        fetch("http://127.0.0.1:8000/delete", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
         .then(response => response.json())
         .then(data => addItem(data))
     }
@@ -57,7 +69,7 @@ function List() {
                 <button className='btn btn-primary'onClick={() =>addItemToList()} >Item hinzufügen</button>
             </div>
             <div className="col-12">
-                <button className='btn btn-danger' onClick={() =>addItem(items.slice(0, items.length - 1))}>
+                <button className='btn btn-danger' onClick={() =>deleteLastItem()}>
                     Item entfernen
                 </button>
             </div>
