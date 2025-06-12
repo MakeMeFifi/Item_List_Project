@@ -44,6 +44,20 @@ function List() {
         .then(data => addItem(data))
     }
 
+    function deleteItem(item) {
+        fetch("http://127.0.0.1:8000/delete_item", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "name": item
+            })
+        })
+        .then(response => response.json())
+        .then(data => addItem(data))
+    }
+
     useEffect(() => {
         setAllData()
     }, [])
@@ -54,13 +68,16 @@ function List() {
             <h1 className='col-12 text-center'>
                 Einkaufsliste
             </h1>
-            <div className="col-12 d-flex justify-content-center">
-                <ul className='list-group-flush list-group list-group-numbered'>
+            <div className="col-12 d-flex justify-content-center flex-column align-items-center">
                     {items.map((item,index) => (
-                        <li key={index} className='list-group-item'>{item}</li> //Adds every item in the list
+                        <ul className='list-group-flush list-group list-group-horizontal'>
+                            <li key={index} className='list-group-item d-flex align-items-center'>{item}</li>
+                            <li className='list-group-item'>
+                                <button className='btn btn-danger' onClick={() => deleteItem(item)} >Delete</button>
+                            </li>
+                        </ul>
                     ))
                     }
-                </ul>
             </div>
             <div className="col-12">
                 <p>{items}</p>
@@ -70,7 +87,7 @@ function List() {
             </div>
             <div className="col-12">
                 <button className='btn btn-danger' onClick={() =>deleteLastItem()}>
-                    Item entfernen
+                    letztes Item entfernen
                 </button>
             </div>
             <div className="col-12">

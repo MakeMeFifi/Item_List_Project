@@ -51,8 +51,14 @@ async def putItem(request : Request):
     return list
 
 @app.delete("/delete")
-async def deleteItem():
+async def deleteLastItem():
     if len(list) == 0:
         return list
     list.pop()
+    return list
+
+@app.delete("/delete_item")
+async def deleteItem(request : Request):
+    data = await request.json()
+    list.remove(data["name"])
     return list
