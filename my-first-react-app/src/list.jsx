@@ -5,6 +5,9 @@ import { useState, useEffect } from 'react';
 function List() {
     const [items, addItem] = useState([])
     const [input, setInput] = useState("")
+    const [firstName, setFirstName] = useState("")
+    const [lastName, setLastName] = useState("")
+    const [id, setId] = useState(9)
 
     function addItemToList() {
         if(input === ""){
@@ -69,8 +72,34 @@ function List() {
         .then(data => addItem(data))
     }
 
+    function addUser() {
+        if (firstName === "" || lastName === "") {
+            return
+        }
+        fetch("http://127.0.0.1:8000/putUser", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "firstname" : firstName,
+                "lastname" : lastName
+            })
+        })
+        .then(response => response.json())
+        .then(ID => {
+            if (ID !== false) {
+                localStorage.setItem("id", ID)
+                setId(localStorage.getItem("id"))
+            }else {
+                alert("User existiert bereits")
+            }
+        })
+    }
+
     useEffect(() => {
         setAllData()
+        setId(localStorage.getItem("id"))
     }, [])
         
 
@@ -104,6 +133,21 @@ function List() {
             <div className="col-12">
                 <input type='text' className='form-control' id='input' placeholder='Item hinzufügen' value={input} onChange={(event) =>setInput(event.target.value)}></input>
             </div>
+            <div className="row">
+                <div className="col-2 m-2">
+                    <button className="btn btn-primary" onClick={() => addUser()}>User hinzufügen</button>
+                </div>
+                <div className="col-3 m-2">
+                    <input className='form-control' placeholder='Vorname' value={firstName} onChange={(event) =>setFirstName(event.target.value)}></input>
+                </div>
+                <div className="col-3 m-2">
+                    <input className='form-control' placeholder='Nachname' value={lastName} onChange={(event) =>setLastName(event.target.value)}></input>
+                </div>
+            </div>
+            <div className="col-12">
+                <p>id: {id}</p>
+            </div>
+            
         </div>
     )
 }

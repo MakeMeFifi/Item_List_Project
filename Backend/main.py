@@ -4,11 +4,13 @@ import sqlite3
 
 #Connection zur DB eröffnen
 
-conn = sqlite3.connect("items,db")
+conn = sqlite3.connect("items.db")
 cursor = conn.cursor()
+cursor.execute("PRAGMA foreign_keys = ON") # Erlaubt die Nutzung von Fremdschlüsseln in der DB
 
 #-----------------------------------------------------------------------------DB erstellung----------------------------------------------------------
-cursor.execute("CREATE TABLE IF NOT EXISTS items (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT, number INTEGER, user TEXT, location TEXT, isBought BOOLEAN DEFAULT 0)")
+cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, firstname TEXT, lastname TEXT)")
+cursor.execute("CREATE TABLE IF NOT EXISTS items (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT, number INTEGER, userID INTEGER, location TEXT, isBought BOOLEAN DEFAULT 0 , FOREIGN KEY(userID) REFERENCES users(id))")
 conn.commit()
 #-----------------------------------------------------------------------------DB erstellung----------------------------------------------------------
 
@@ -25,7 +27,7 @@ class Item:
 
 
 class ListItem:
-    def __init__(self, id : int, name: str , number: int , user : str,location : str, isBought : bool):
+    def __init__(self, id : int, name: str , number: int , user : int,location : str, isBought : bool):
         self.id = id
         self.name = name
         self.number = number
@@ -104,3 +106,15 @@ async def deleteItem(request : Request):
 async def deleteAllItems():
     deleteAllData()
     return getAllItems()
+
+@app.put("/putUser")
+async def putUser(request : Request):
+    data = await request.json()
+    cursor.execute("SELECT * FROM users WHERE firstname = ? AND lastname = ?", (data["firstname"], data["lastname"]))
+    if cursor.fetchone() is None:
+        cursor.execute("INSERT INTO users (firstname, lastname) VALUES (?,?)", (data["firstname"], data["lastname"]))
+        cursor.execute("SELECT id FROM users WHERE firstname = ? AND lastname = ?", (data["firstname"], data["lastname"]))
+        id = cursor.fetchone()
+        return id
+    else:
+        return False
