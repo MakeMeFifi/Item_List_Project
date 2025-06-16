@@ -58,11 +58,12 @@ app = FastAPI()
 origins = [
     "http://localhost:5173",  # React dev server
     "http://127.0.0.1:5173",  # Optional: for consistency
+    "http://127.0.0.1:8081",
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,            # list of allowed origins
+    allow_origins=["*"],            # list of allowed origins
     allow_credentials=True,
     allow_methods=["*"],              # allow all HTTP methods (GET, POST, etc.)
     allow_headers=["*"],              # allow all headers
@@ -118,3 +119,13 @@ async def putUser(request : Request):
         return id
     else:
         return False
+
+@app.post("/login")
+async def login(request : Request):
+    data = await request.json()
+    cursor.execute("SELECT id FROM users WHERE firstname = ? AND lastname = ?", (data["firstname"], data["lastname"]))
+    user = cursor.fetchone()
+    if user is None:
+        return False
+    else:
+        return user[0]
