@@ -1,12 +1,12 @@
 import { View, Text, StyleSheet, ImageBackground } from 'react-native'
 import React from 'react'
-import World from '@/assets/images/World.png'
+import background from "@/assets/images/background.png"
 
 const App = () => {
   return (
     <View style={styles.container}>
-      <ImageBackground source={World} resizeMode='contain' style={styles.image}>
-        <Text style={styles.text}>List App</Text>
+      <ImageBackground source={background} resizeMode='cover' style={styles.image}>
+        <Text style={styles.text}>Das ist ein test meine Kerle</Text>
       </ImageBackground>
     </View>
   )
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    
+    backgroundImage: {background},
   },
   text: {
     color: "white",
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     flex: 1,
-    resizeMode: 'contain',
+    resizeMode: 'cover',
     justifyContent: 'center',
   }
 })
