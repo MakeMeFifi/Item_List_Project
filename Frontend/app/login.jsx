@@ -45,6 +45,30 @@ const Login = () => {
         }
     }
 
+async function register() {
+    if(userName === "") {
+        return
+    }
+    fetch("http://192.168.2.35:8000/putUser", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "username": userName
+        })
+    })
+    .then(response => response.json())
+    .then(result => async () => {
+        if(result === false) {
+            alert("User existiert bereits")
+            return
+        }else  {
+            await AsyncStorage.setItem("id", String(result))
+            navigation.navigate("(tabs)")
+        }
+    })
+    }
 
     useEffect(() => {       // prüft ob eingeloggt
         checkIfLoggedIn(navigation)
@@ -59,7 +83,7 @@ const Login = () => {
                 <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
             <TouchableOpacity style= {{width: "70%", borderRadius: 20, marginTop: 50, backgroundColor: 'rgba(50, 65, 198, 0.5)',}}>
-                <Text style={styles.buttonText}>Registrieren</Text>
+                <Text style={styles.buttonText} onPress={() => register()}>Registrieren</Text>
             </TouchableOpacity>
         </ImageBackground>
     </View>
