@@ -5,12 +5,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import background from "@/assets/images/background.png"
 
 const Login = () => {
-    const [firstName, setfirstName] = useState("")
-    const [lastName, setLastName] = useState("")
+    const [userName, setUserName] = useState("")
     const navigation = useNavigation()
 
     function login() {
-        if(firstName === "" || lastName === "") {
+        if(userName === "") {
             return
         }
         fetch("http://192.168.2.35:8000/login", {
@@ -19,8 +18,7 @@ const Login = () => {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                "firstname": firstName,
-                "lastname" : lastName
+                "username": userName,
             })
         }
     )
@@ -56,8 +54,7 @@ const Login = () => {
     <View style={styles.container}>
         <ImageBackground source={background} resizeMode='cover' style={styles.background}>
             <Text style={styles.text}>Melde dich an du Schwein</Text>
-            <TextInput style={styles.input} placeholder='Vorname' value={firstName} onChange={(event) => setfirstName(event.nativeEvent.text)}/>
-            <TextInput style={styles.input} placeholder='Nachname' value={lastName} onChange={(event) => setLastName(event.nativeEvent.text)}/>
+            <TextInput style={styles.input} placeholder='Vorname' value={userName} onChange={(event) => setUserName(event.nativeEvent.text)}/>
             <TouchableOpacity style= {{width: "70%", borderRadius: 20, marginTop: 50, backgroundColor: 'rgba(50, 102, 198, 0.5)',}} onPress={() => login()}>
                 <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
