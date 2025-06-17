@@ -9,7 +9,7 @@ cursor = conn.cursor()
 cursor.execute("PRAGMA foreign_keys = ON") # Erlaubt die Nutzung von Fremdschlüsseln in der DB
 
 #-----------------------------------------------------------------------------DB erstellung----------------------------------------------------------
-cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, firstname TEXT, lastname TEXT)")
+cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, userName TEXT)")
 cursor.execute("CREATE TABLE IF NOT EXISTS items (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT, number INTEGER, userID INTEGER, location TEXT, isBought BOOLEAN DEFAULT 0 , FOREIGN KEY(userID) REFERENCES users(id))")
 conn.commit()
 #-----------------------------------------------------------------------------DB erstellung----------------------------------------------------------
@@ -38,6 +38,7 @@ class ListItem:
 
 def addItem(item : Item):
     cursor.execute("INSERT INTO items (name, number, user, location) VALUES (?,?,?,?)", (item.name, item.number, item.user, item.location))
+    conn.commit()
     return True
 
 def getAllItems():
@@ -51,6 +52,7 @@ def getAllItems():
 
 def deleteAllData():
     cursor.execute("DELETE FROM items")
+    conn.commit()
     return True
 
 app = FastAPI()
@@ -90,13 +92,6 @@ async def putItem(request : Request):
     addItem(item)
     return getAllItems()
 
-@app.delete("/delete")
-async def deleteLastItem():
-    if len(list) == 0:
-        return list
-    list.pop()
-    return list
-
 @app.delete("/delete_item")
 async def deleteItem(request : Request):
     data = await request.json()
@@ -111,10 +106,11 @@ async def deleteAllItems():
 @app.put("/putUser")
 async def putUser(request : Request):
     data = await request.json()
-    cursor.execute("SELECT * FROM users WHERE firstname = ? AND lastname = ?", (data["firstname"], data["lastname"]))
+    cursor.execute("SELECT * FROM users WHERE userName=?", (data["username"],))
     if cursor.fetchone() is None:
-        cursor.execute("INSERT INTO users (firstname, lastname) VALUES (?,?)", (data["firstname"], data["lastname"]))
-        cursor.execute("SELECT id FROM users WHERE firstname = ? AND lastname = ?", (data["firstname"], data["lastname"]))
+        cursor.execute("INSERT INTO users (userName) VALUES (?)", (data["username"],))
+        conn.commit()
+        cursor.execute("SELECT id FROM users WHERE userName=?", (data["username"],))
         id = cursor.fetchone()
         return id
     else:
@@ -123,7 +119,7 @@ async def putUser(request : Request):
 @app.post("/login")
 async def login(request : Request):
     data = await request.json()
-    cursor.execute("SELECT id FROM users WHERE firstname = ? AND lastname = ?", (data["firstname"], data["lastname"]))
+    cursor.execute("SELECT id FROM users WHERE userName=?", (data.get("username"),))
     user = cursor.fetchone()
     if user is None:
         return False
