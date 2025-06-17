@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, ImageBackground, Button } from 'react-native'
 import { useState } from 'react'
 import background from "@/assets/images/background.png"
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const App = () => {
   const [count, setCount] = useState(0)
@@ -11,6 +12,7 @@ const App = () => {
         <Text style={styles.text}>Das ist ein test meine Kerle</Text>
         <Text style={styles.text}>Hier ist ne Zahl {count}</Text>
         <Button title='Drück mich mal' onPress={() => setCount(count + 1)} />
+        <Text style={styles.text}> Deine zuzeitige ID : {AsyncStorage.getItem("id")}</Text>
       </ImageBackground>
     </View>
   )
