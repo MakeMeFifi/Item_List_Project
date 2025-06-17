@@ -59,13 +59,16 @@ async function register() {
         })
     })
     .then(response => response.json())
-    .then(result => async () => {
+    .then(result => {
         if(result === false) {
             alert("User existiert bereits")
             return
         }else  {
-            await AsyncStorage.setItem("id", String(result))
-            navigation.navigate("(tabs)")
+            AsyncStorage.setItem("id", String(result))
+            .then(() => {
+                navigation.navigate("(tabs)")
+            })
+            
         }
     })
     }

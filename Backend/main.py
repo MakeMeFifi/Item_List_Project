@@ -112,8 +112,9 @@ async def putUser(request : Request):
         conn.commit()
         cursor.execute("SELECT id FROM users WHERE userName=?", (data["username"],))
         id = cursor.fetchone()
-        return id
+        return id[0]
     else:
+        print("User already exists")
         return False
 
 @app.post("/login")
