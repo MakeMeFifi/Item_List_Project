@@ -3,7 +3,7 @@ import { useEffect , useState} from "react"
 import background from "@/assets/images/background.png"
 
 const List = () => {
-    const [listData, setListData] = useState(["Item 1", "Item 2", "Item 3", "Item 4", "Item 5"]);
+    const [listData, setListData] = useState([{"name" : "Test1", "number": "1234567890", "id": 1}, {"name" : "Test2", "number": "0987654321", "id": 2}, {"name" : "Test3", "number": "1122334455", "id": 3}]);
 
     function fetchListData() {
         fetch("http://192.168.2.35:8000/getList", )
@@ -18,22 +18,23 @@ const List = () => {
         })
     }
 
-    useEffect(() => fetchListData(), [])
+    useEffect(() =>fetchListData(), [])
 
 
 return (
     <View style={styles.container}>
-        <ImageBackground source={background} style ={styles.background} resizeMode="cover">
+        <ImageBackground source={background} style={styles.background} resizeMode="cover">
             <Text style={styles.text}>Hier ist die Liste</Text>
-            <View>
                 <FlatList
-                    contentContainerStyle={{ alignItems: "center", justifyContent: "center", flex: 1, backgroundColor: 'rgba(50, 102, 198, 0.5)', padding: 100, borderRadius: 10, width: 'auto' }}
+                    contentContainerStyle={styles.listContainer}
                     data={listData}
                     renderItem={({ item }) => (
-                        <Text style={styles.listItem}>{item.name}</Text>
+                        <View style={styles.row}>
+                            <Text key={item.id} style={styles.listItem}>{item.name}</Text>
+                            <Text key={item.id + 1} style={styles.listItem}>{item.number}</Text>
+                        </View>
                     )}
                 />
-            </View>
         </ImageBackground> 
     </View>
 )
@@ -50,7 +51,7 @@ const styles = StyleSheet.create({
     },
     background: {
         flex: 1,
-        justifyContent: "flex-start",
+        justifyContent: "center",
         alignItems: "center",
         resizeMode: "cover",
         width: "100%",
@@ -60,23 +61,39 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 20,
         fontWeight: "bold",
-        margin: 15,
+        margin: 30,
         backgroundColor: 'rgba(50, 102, 198, 0.5)',
         padding: 10,
+    },
+    listContainer: {
+        alignItems: "center",
+        justifyContent: "flex-start",
+        flexDirection: "column",
+        padding: 5,
+        borderRadius: 10,
+        margin: 10,
+        backgroundColor: 'rgba(50, 102, 198, 0.5)',
+        width: "auto",
+        
     },
     listItem: {
         color: "white",
         fontSize: 20,
-        fontWeight: "bold",
+        borderWidth: 1,
+        marginHorizontal: 5,
+        marginVertical: 2,
     },
     list: {
         backgroundColor: 'rgba(50, 102, 198, 0.5)',
         borderRadius: 10,
         margin: 5, 
-        width: '90%', 
         padding: 10,
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center"
+    },
+    row: {
+        flexDirection: "row",
+        justifyContent: "space-evenly",
+        alignItems: "center",
+        width: "100%",
+        marginVertical: 2,
     }
 })
