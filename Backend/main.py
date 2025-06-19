@@ -72,18 +72,15 @@ app.add_middleware(
 )
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-
-@app.get("/items")
-async def items():
-    return getAllItems()
-
-@app.get("/items/{id}")
-async def getOneItem(id):
-    return list[int(id)]
+@app.get("/getList")
+async def getList():
+    cursor.execute("SELECT * FROM items")
+    list = []
+    data = cursor.fetchall()
+    for row in data:
+        item = ListItem(row[0], row[1], row[2], row[3], row[4], row[5])
+        list.append(item)
+    return list
 
 @app.put("/put")
 async def putItem(request : Request):    
