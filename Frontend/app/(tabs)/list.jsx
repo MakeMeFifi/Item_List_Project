@@ -1,10 +1,15 @@
-import { View, Text, StyleSheet, ImageBackground, FlatList } from 'react-native'
+import { View, Text, StyleSheet, ImageBackground, FlatList, TouchableOpacity, Modal, TextInput } from 'react-native'
 import { useEffect , useState} from "react"
+import { BlurView } from 'expo-blur';
 import background from "@/assets/images/background.png"
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const List = () => {
     const [listData, setListData] = useState([{"name" : "Test1", "number": "1234567890", "id": 1}, {"name" : "Test2", "number": "0987654321", "id": 2}, {"name" : "Test3", "number": "1122334455", "id": 3}]);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [newItem, setNewItem] = useState({name: "", number: "",location: ""});
 
+    // Fetch the list data from the server
     function fetchListData() {
         fetch("http://192.168.2.35:8000/getList", )
         .then(response => response.json())
@@ -18,6 +23,37 @@ const List = () => {
         })
     }
 
+    async function addItem() {
+        if(newItem.name === "" || newItem.number === "" || newItem.location === "") {
+            alert("Bitte fülle alle Felder aus")
+            return
+        }
+        const id = await AsyncStorage.getItem("id")
+        fetch("http://192.168.2.35:8000/put", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "name": newItem.name,
+                "number": newItem.number,
+                "location": newItem.location,
+                "user": id
+            })
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result !== true) {
+                alert("Item konnte nicht hinzugefügt werden")
+                return
+            }
+            alert("Item erfolgreich hinzugefügt")
+            setNewItem({name: "", number: "", location: ""}) // Reset the newItem state
+            setModalVisible(false) // Close the modal
+            fetchListData()
+        })
+    }
+
     useEffect(() =>fetchListData(), [])
 
 
@@ -25,16 +61,48 @@ return (
     <View style={styles.container}>
         <ImageBackground source={background} style={styles.background} resizeMode="cover">
             <Text style={styles.text}>Hier ist die Liste</Text>
-                <FlatList
-                    contentContainerStyle={styles.listContainer}
-                    data={listData}
-                    renderItem={({ item }) => (
-                        <View style={styles.row}>
-                            <Text key={item.id} style={styles.listItem}>{item.name}</Text>
-                            <Text key={item.id + 1} style={styles.listItem}>{item.number}</Text>
+            <FlatList
+                contentContainerStyle={styles.listContainer}
+                data={listData}
+                renderItem={({ item }) => (
+                    <View style={styles.row}>
+                        <Text key={item.id} style={styles.listItem}>{item.name}</Text>
+                        <Text key={item.id + 1} style={styles.listItem}>{item.number}</Text>
+                    </View>
+                )}
+            />
+            <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
+                <Text style={styles.buttonText}>Item hinzufügen</Text>
+            </TouchableOpacity>
+            {/* BlurView overlay when modal is visible */}
+            {modalVisible && (
+                <BlurView intensity={100} tint="dark" style={StyleSheet.absoluteFill} />
+            )}
+            {/* Modal should be rendered after BlurView so it's above the blur */}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(!modalVisible);
+                }}>
+                <View style={styles.modalContainer}>
+                    <View style= {styles.modalWindow}>
+                        <View style={styles.closingWindow}> 
+                            <TouchableOpacity style={styles.closingButton} onPress={() => setModalVisible(!modalVisible)}>
+                                <Text style={styles.buttonText}>X</Text>
+                            </TouchableOpacity>
                         </View>
-                    )}
-                />
+                        <Text style={styles.text}>Hier kannst du ein Item hinzufügen</Text>
+                        <TextInput style={styles.input} placeholder='Name' value={newItem.name} onChange={(event) => setNewItem({...newItem,name: event.nativeEvent.text})}/>
+                        <TextInput style={styles.input} placeholder='Ort' value={newItem.location} onChange={(event) => setNewItem({...newItem,location: event.nativeEvent.text})}/>
+                        <TextInput style={styles.input} placeholder='Anzahl' value={newItem.number} onChange={(event) => setNewItem({...newItem,number: event.nativeEvent.text})}/>                            
+                        <TouchableOpacity style={styles.button} onPress={() => addItem()}>
+                            <Text style={styles.buttonText} >Item hinzufügen</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </ImageBackground> 
     </View>
 )
@@ -67,13 +135,12 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         alignItems: "center",
-        justifyContent: "flex-start",
         flexDirection: "column",
         padding: 5,
         borderRadius: 10,
         margin: 10,
         backgroundColor: 'rgba(50, 102, 198, 0.5)',
-        width: "auto",
+        
         
     },
     listItem: {
@@ -84,10 +151,9 @@ const styles = StyleSheet.create({
         marginVertical: 2,
     },
     list: {
+        width: "auto",
+        height: "auto",
         backgroundColor: 'rgba(50, 102, 198, 0.5)',
-        borderRadius: 10,
-        margin: 5, 
-        padding: 10,
     },
     row: {
         flexDirection: "row",
@@ -95,5 +161,48 @@ const styles = StyleSheet.create({
         alignItems: "center",
         width: "100%",
         marginVertical: 2,
+    },
+    button: {
+        borderRadius: 20,
+        backgroundColor: 'rgba(50, 102, 198, 0.5)',
+        padding: 10,
+        margin: 20,
+    },
+    closingButton: {
+        borderRadius: 20,
+        backgroundColor: 'rgba(198, 50, 50, 0.5)',
+        height: 40,
+        width: 40,
+        textAlign: "center",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    buttonText: {
+        color: "white",
+        fontSize: 20,
+        fontWeight: "bold",
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    modalWindow: {
+        backgroundColor: 'rgba(50, 102, 198, 0.5)',
+        padding: 20,
+        borderRadius: 10,
+        alignItems: "center",
+    },
+    input: {
+        backgroundColor: 'rgba(50, 102, 198, 0.5)',
+        margin: 20,
+        padding: 10,
+        fontSize: 20,
+        color: "white",
+        minWidth: "80%",
+        borderRadius: 20,
+    },
+    closingWindow: {
+        alignSelf: "flex-end",
     }
 })

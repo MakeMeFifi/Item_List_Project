@@ -37,7 +37,7 @@ class ListItem:
 
 
 def addItem(item : Item):
-    cursor.execute("INSERT INTO items (name, number, user, location) VALUES (?,?,?,?)", (item.name, item.number, item.user, item.location))
+    cursor.execute("INSERT INTO items (name, number, userID, location) VALUES (?,?,?,?)", (item.name, item.number, item.user, item.location))
     conn.commit()
     return True
 
@@ -87,7 +87,7 @@ async def putItem(request : Request):
     data = await request.json()
     item = Item(data["name"], data["number"], data["user"], data["location"])
     addItem(item)
-    return getAllItems()
+    return True
 
 @app.delete("/delete_item")
 async def deleteItem(request : Request):
