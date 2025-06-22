@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, ImageBackground, FlatList, TouchableOpacity, Modal, TextInput } from 'react-native'
 import { useEffect , useState} from "react"
 import { BlurView } from 'expo-blur';
+import { Collapsible } from '@/components/Collapsible';
 import background from "@/assets/images/background.png"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -65,9 +66,13 @@ return (
                 contentContainerStyle={styles.listContainer}
                 data={listData}
                 renderItem={({ item }) => (
-                    <View style={styles.row}>
-                        <Text key={item.id} style={styles.listItem}>{item.name}</Text>
-                        <Text key={item.id + 1} style={styles.listItem}>{item.number}</Text>
+                    <View key={item.id} style={styles.row}>
+                        <Text style={styles.listItem}>{item.name}</Text>
+                        <Text style={styles.listItem}>{item.number}</Text>
+                        <Text style={styles.listItem}>{item.location}</Text>
+                        <Text style={styles.listItem}>{item.user}</Text>
+                        <Text style={styles.listItem}>{item.location}</Text>
+
                     </View>
                 )}
             />
@@ -140,15 +145,16 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         margin: 10,
         backgroundColor: 'rgba(50, 102, 198, 0.5)',
-        
-        
+        width: "100%",
     },
     listItem: {
         color: "white",
-        fontSize: 20,
+        fontSize: 13,
         borderWidth: 1,
-        marginHorizontal: 5,
         marginVertical: 2,
+        textAlign: "center",
+        width: "15%",
+        flexWrap: "nowrap"
     },
     list: {
         width: "auto",
@@ -170,7 +176,7 @@ const styles = StyleSheet.create({
     },
     closingButton: {
         borderRadius: 20,
-        backgroundColor: 'rgba(198, 50, 50, 0.5)',
+        backgroundColor: 'rgb(255, 0, 0)',
         height: 40,
         width: 40,
         textAlign: "center",
