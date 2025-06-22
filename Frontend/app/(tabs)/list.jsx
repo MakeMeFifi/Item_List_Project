@@ -1,8 +1,7 @@
-import { View, Text, StyleSheet, ImageBackground, FlatList, TouchableOpacity, Modal, TextInput } from 'react-native'
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, TextInput } from 'react-native'
 import { useEffect , useState} from "react"
 import { BlurView } from 'expo-blur';
 import { Collapsible } from '@/components/Collapsible';
-import background from "@/assets/images/background.png"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const List = () => {
@@ -60,25 +59,19 @@ const List = () => {
 
 return (
     <View style={styles.container}>
-        <ImageBackground source={background} style={styles.background} resizeMode="cover">
-            <Text style={styles.text}>Hier ist die Liste</Text>
-            <FlatList
-                contentContainerStyle={styles.listContainer}
-                data={listData}
-                renderItem={({ item }) => (
-                    <View key={item.id} style={styles.row}>
-                        <Text style={styles.listItem}>{item.name}</Text>
-                        <Text style={styles.listItem}>{item.number}</Text>
-                        <Text style={styles.listItem}>{item.location}</Text>
-                        <Text style={styles.listItem}>{item.user}</Text>
-                        <Text style={styles.listItem}>{item.location}</Text>
-
-                    </View>
-                )}
-            />
-            <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
-                <Text style={styles.buttonText}>Item hinzufügen</Text>
-            </TouchableOpacity>
+        <Text style={styles.title}>Item Liste</Text>
+        <FlatList 
+            data={listData} 
+            style={styles.list}
+            contentContainerStyle={styles.listContainer}
+            keyExtractor={item => item.id?.toString() || item.name}
+            renderItem={({item}) => (
+                <Text style={styles.listItem}>
+                    {item.name}
+                </Text>
+            )}
+        />
+        
             {/* BlurView overlay when modal is visible */}
             {modalVisible && (
                 <BlurView intensity={100} tint="dark" style={StyleSheet.absoluteFill} />
@@ -108,7 +101,6 @@ return (
                     </View>
                 </View>
             </Modal>
-        </ImageBackground> 
     </View>
 )
 }
@@ -119,16 +111,9 @@ export default List
 const styles = StyleSheet.create({
     container:  {
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center"
-    },
-    background: {
-        flex: 1,
-        justifyContent: "center",
+        justifyContent: "flex-start",
         alignItems: "center",
-        resizeMode: "cover",
-        width: "100%",
-        height: "100%"
+        backgroundColor: "#121212"
     },
     text:{
         color: "white",
@@ -138,28 +123,33 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(50, 102, 198, 0.5)',
         padding: 10,
     },
+    title: {
+        fontSize: 32,
+        color: '#fff',
+        fontWeight: 'bold',
+        marginTop: 30,
+        textAlign: 'center',
+        textDecorationLine: 'underline',
+    },
     listContainer: {
-        alignItems: "center",
+        width: "100%",
         flexDirection: "column",
-        padding: 5,
+        alignItems: "center", // sicherstellen, dass Items mittig sind
+    },
+    list: {
+        borderColor: 'rgba(50, 102, 198, 0.5)',
+        borderWidth: 1,
         borderRadius: 10,
-        margin: 10,
-        backgroundColor: 'rgba(50, 102, 198, 0.5)',
+        alignSelf: "stretch",
         width: "100%",
     },
     listItem: {
         color: "white",
-        fontSize: 13,
+        fontSize: 20,
         borderWidth: 1,
         marginVertical: 2,
-        textAlign: "center",
-        width: "15%",
-        flexWrap: "nowrap"
-    },
-    list: {
-        width: "auto",
-        height: "auto",
-        backgroundColor: 'rgba(50, 102, 198, 0.5)',
+        textAlign: "center", // Text zentrieren
+        borderRadius: 10, // optional: für schöneres Aussehen
     },
     row: {
         flexDirection: "row",
