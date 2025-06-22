@@ -41,14 +41,6 @@ def addItem(item : Item):
     conn.commit()
     return True
 
-def getAllItems():
-    cursor.execute("SELECT* FROM items")
-    list = []
-    row = cursor.fetchall()
-    for result in row:
-        item = ListItem(result[0], result[1], result[2], result[3], result[4], result[5])
-        list.append(item)
-    return list
 
 def deleteAllData():
     cursor.execute("DELETE FROM items")
@@ -74,7 +66,7 @@ app.add_middleware(
 
 @app.get("/getList")
 async def getList():
-    cursor.execute("SELECT * FROM items")
+    cursor.execute("SELECT items.id, items.name, items.number, users.userName, items.location, items.isBought FROM items JOin users ON items.userID = users.id")
     list = []
     data = cursor.fetchall()
     for row in data:
@@ -89,16 +81,6 @@ async def putItem(request : Request):
     addItem(item)
     return True
 
-@app.delete("/delete_item")
-async def deleteItem(request : Request):
-    data = await request.json()
-    list.remove(data["name"])
-    return list
-
-@app.delete("/delete_all")
-async def deleteAllItems():
-    deleteAllData()
-    return getAllItems()
 
 @app.put("/putUser")
 async def putUser(request : Request):
