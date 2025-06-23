@@ -112,3 +112,10 @@ async def deleteItem(request : Request):
     cursor.execute("DELETE FROM items WHERE id=?", (data["id"],))
     conn.commit()
     return True
+
+@app.post("/changeIsBoughtStatus")
+async def changeIsBoughtStatus(request: Request):
+    data = await request.json()
+    cursor.execute("UPDATE items SET isBought = ? WHERE id = ?", (data["status"], data["id"],))
+    conn.commit()
+    return True
