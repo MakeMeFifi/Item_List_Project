@@ -1,8 +1,13 @@
-import { View, Text, StyleSheet, ImageBackground, TextInput, TouchableOpacity} from 'react-native'
+import { View, Text, StyleSheet, ImageBackground, TextInput, TouchableOpacity, LogBox} from 'react-native'
 import  { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import background from "@/assets/images/background.png"
+
+// Diese Zeile unterdrückt die Checkbox-Fehlermeldung nur im Dev-Modus
+LogBox.ignoreLogs([
+  'Text strings must be rendered within a <Text> component.',
+]);
 
 const Login = () => {
     const [userName, setUserName] = useState("")
