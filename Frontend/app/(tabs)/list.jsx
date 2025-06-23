@@ -4,6 +4,7 @@ import { BlurView } from 'expo-blur';
 import { Collapsible } from '@/components/Collapsible';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconSymbol } from "@/components/ui/IconSymbol";
+import {Checkbox} from 'expo-checkbox';
 
 const List = () => {
     const [listData, setListData] = useState([{"name" : "Test1", "number": "1234567890", "id": 1}, {"name" : "Test2", "number": "0987654321", "id": 2}, {"name" : "Test3", "number": "1122334455", "id": 3}]);
@@ -77,12 +78,39 @@ const List = () => {
         })
     }
 
+    function changeIsBoughtStatus(newVal, id) {
+        fetch("http://192.168.2.35:8000/changeIsBoughtStatus", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "id": id,
+                "status": newVal
+            })
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result !== true) {
+                alert("Status konnte nicht geändert werden, versuchen sie es bitte erneut")
+                return
+            }else {
+                fetchListData()
+            }
+        })
+    }
     useEffect(() =>fetchListData(), [])
 
 
 return (
     <View style={styles.container}>
         <Text style={styles.title}>Item Liste</Text>
+        <TouchableOpacity style= {styles.addButton} onPress={() => setModalVisible(true)}>
+            <Text style = {styles.addButtonText}>
+                + Item Hinzufügen
+            </Text>
+        </TouchableOpacity>
+        { listData.length === 0 && <Text style={styles.noItemText}>Keine Items gefunden</Text> }
         <FlatList 
             data={listData} 
             style={styles.list}
@@ -91,14 +119,20 @@ return (
             renderItem={({item}) => (
                 <View style={styles.row} key={item.id}>
                     <View style={styles.collapsibleWrapper}>
-                        <Collapsible title={item.name}>
+                        <Collapsible title={String(item.name)}>
                             <Text style={styles.listItem}>Name: {item.name}</Text>
                             <Text style={styles.listItem}>Anzahl: {item.number}</Text>
                             <Text style={styles.listItem}>Ort: {item.location}</Text>
+                            <Text style={styles.listItem}>Hinzugefügt von: {item.user}</Text>
+                            <View style={{flexDirection: "row", alignItems: "center"}}>
+                                <Text style={styles.listItem}>Schon gekauft: </Text>
+                                <Checkbox value= {item.isBought} onValueChange={(newVal) => changeIsBoughtStatus(newVal, item.id) }  tintColors={{ true: '#00f', false: '#ccc' }} />
+                            </View>
+                            
                         </Collapsible>
                     </View>
                     <TouchableOpacity style={styles.deleteButton} onPress={() => deleteItem(item.id)}>
-                        <IconSymbol name="trash" size= {20} color= "white"/>
+                        <IconSymbol name="trash" size= {20} color= "red"/>
                     </TouchableOpacity>
                 </View>
             )}
@@ -125,8 +159,9 @@ return (
                         </View>
                         <Text style={styles.text}>Hier kannst du ein Item hinzufügen</Text>
                         <TextInput style={styles.input} placeholder='Name' value={newItem.name} onChange={(event) => setNewItem({...newItem,name: event.nativeEvent.text})}/>
-                        <TextInput style={styles.input} placeholder='Ort' value={newItem.location} onChange={(event) => setNewItem({...newItem,location: event.nativeEvent.text})}/>
                         <TextInput style={styles.input} placeholder='Anzahl' value={newItem.number} onChange={(event) => setNewItem({...newItem,number: event.nativeEvent.text})}/>                            
+                        <TextInput style={styles.input} placeholder='Ort' value={newItem.location} onChange={(event) => setNewItem({...newItem,location: event.nativeEvent.text})}/>
+                        
                         <TouchableOpacity style={styles.button} onPress={() => addItem()}>
                             <Text style={styles.buttonText} >Item hinzufügen</Text>
                         </TouchableOpacity>
@@ -209,7 +244,7 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: "white",
-        fontSize: 10,
+        fontSize: 15,
         fontWeight: "bold",
         textAlign: "center",
         textAlignVertical: "center", // sorgt für vertikale Zentrierung auf Android
@@ -239,11 +274,36 @@ const styles = StyleSheet.create({
         alignSelf: "flex-end",
     },
     deleteButton: {
-        backgroundColor: 'rgba(255, 0, 0, 0.7)',
+        borderWidth: 2,
+        borderColor: 'rgba(255, 0, 0, 0.7)',
         borderRadius: 10,
-        height:30,
-        width:30,
+        height:35,
+        width:35,
         alignItems: "center",
         justifyContent: "center",
     },
+    addButton: {
+        alignSelf: "stretch",
+        backgroundColor: 'rgba(50, 102, 198, 0.5)',
+        padding: 10,
+        margin: 20,
+        borderRadius: 20,
+    },
+    addButtonText: {
+        color: "white",
+        fontSize: 20,
+        fontWeight: "bold",
+        textAlign: "center",
+    },
+    noItemText: {
+        color: "white",
+        fontSize: 20,
+        margin: 10,
+        textAlign: "center",
+        backgroundColor: 'rgba(50, 102, 198, 0.2)',
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: 'rgba(50, 102, 198, 0.5)',
+        padding: 10,
+    }
 })
