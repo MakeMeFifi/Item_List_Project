@@ -5,11 +5,9 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
 
 export function Collapsible({ children, title }: PropsWithChildren & { title: string }) {
   const [isOpen, setIsOpen] = useState(false);
-  const theme = useColorScheme() ?? 'light';
 
   return (
     <ThemedView style={styles.container}>
@@ -21,7 +19,7 @@ export function Collapsible({ children, title }: PropsWithChildren & { title: st
           name="chevron.right"
           size={18}
           weight="medium"
-          color={theme === 'light' ? Colors.light.icon : Colors.dark.icon}
+          color={Colors.dark.icon}
           style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }}
         />
 
@@ -37,14 +35,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: 'rgba(43, 84, 160, 0.5)',
-    height: 30
+    height: 30,
+    width: '100%',
+    borderRadius: 10,
   },
   content: {
     marginTop: 6,
     marginLeft: 24,
     justifyContent: 'center',
     alignItems: 'flex-start',
+    backgroundColor: "rgba(66, 87, 125, 0.0)",
   },
   text: {
     fontSize: 20,
@@ -52,8 +52,7 @@ const styles = StyleSheet.create({
     flex: 1,             // nimmt den verfügbaren Platz ein
   },
   container: {
-    alignSelf: 'center',
-    width: '100%',
-    
+    alignSelf: 'stretch',
+    backgroundColor: "rgba(66, 87, 125, 0.0)",
   }
 });

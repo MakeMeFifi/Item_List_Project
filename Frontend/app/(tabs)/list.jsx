@@ -3,6 +3,7 @@ import { useEffect , useState} from "react"
 import { BlurView } from 'expo-blur';
 import { Collapsible } from '@/components/Collapsible';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { IconSymbol } from "@/components/ui/IconSymbol";
 
 const List = () => {
     const [listData, setListData] = useState([{"name" : "Test1", "number": "1234567890", "id": 1}, {"name" : "Test2", "number": "0987654321", "id": 2}, {"name" : "Test3", "number": "1122334455", "id": 3}]);
@@ -54,6 +55,28 @@ const List = () => {
         })
     }
 
+    function deleteItem(id) {
+        fetch("http://192.168.2.35:8000/deleteItem", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "id": id
+            })
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result !== true) {
+                alert("Item konnte nicht gelöscht werden, versuchen sie es bitte erneut")
+                return
+            }else {
+                alert("Item erfolgreich gelöscht")
+                fetchListData()
+            }
+        })
+    }
+
     useEffect(() =>fetchListData(), [])
 
 
@@ -66,9 +89,18 @@ return (
             contentContainerStyle={styles.listContainer}
             keyExtractor={item => item.id?.toString() || item.name}
             renderItem={({item}) => (
-                <Text style={styles.listItem}>
-                    {item.name}
-                </Text>
+                <View style={styles.row} key={item.id}>
+                    <View style={styles.collapsibleWrapper}>
+                        <Collapsible title={item.name}>
+                            <Text style={styles.listItem}>Name: {item.name}</Text>
+                            <Text style={styles.listItem}>Anzahl: {item.number}</Text>
+                            <Text style={styles.listItem}>Ort: {item.location}</Text>
+                        </Collapsible>
+                    </View>
+                    <TouchableOpacity style={styles.deleteButton} onPress={() => deleteItem(item.id)}>
+                        <IconSymbol name="trash" size= {20} color= "white"/>
+                    </TouchableOpacity>
+                </View>
             )}
         />
         
@@ -113,7 +145,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "flex-start",
         alignItems: "center",
-        backgroundColor: "#121212"
+        backgroundColor: "rgba(66, 87, 125, 0.4)",
     },
     text:{
         color: "white",
@@ -146,17 +178,20 @@ const styles = StyleSheet.create({
     listItem: {
         color: "white",
         fontSize: 20,
-        borderWidth: 1,
         marginVertical: 2,
         textAlign: "center", // Text zentrieren
         borderRadius: 10, // optional: für schöneres Aussehen
     },
     row: {
         flexDirection: "row",
-        justifyContent: "space-evenly",
-        alignItems: "center",
+        alignItems: "flex-start", // wichtig: damit Button oben bleibt
         width: "100%",
         marginVertical: 2,
+        alignSelf: "stretch",
+        padding: 10,
+    },
+    collapsibleWrapper: {
+        flex: 1, // nimmt den restlichen Platz ein
     },
     button: {
         borderRadius: 20,
@@ -169,14 +204,16 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgb(255, 0, 0)',
         height: 40,
         width: 40,
-        textAlign: "center",
         justifyContent: "center",
         alignItems: "center",
     },
     buttonText: {
         color: "white",
-        fontSize: 20,
+        fontSize: 10,
         fontWeight: "bold",
+        textAlign: "center",
+        textAlignVertical: "center", // sorgt für vertikale Zentrierung auf Android
+        includeFontPadding: false,   // optional: bessere Zentrierung auf Android
     },
     modalContainer: {
         flex: 1,
@@ -200,5 +237,13 @@ const styles = StyleSheet.create({
     },
     closingWindow: {
         alignSelf: "flex-end",
-    }
+    },
+    deleteButton: {
+        backgroundColor: 'rgba(255, 0, 0, 0.7)',
+        borderRadius: 10,
+        height:30,
+        width:30,
+        alignItems: "center",
+        justifyContent: "center",
+    },
 })
