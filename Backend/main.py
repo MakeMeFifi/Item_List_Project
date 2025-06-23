@@ -105,3 +105,10 @@ async def login(request : Request):
         return False
     else:
         return user[0]
+
+@app.delete("/deleteItem")
+async def deleteItem(request : Request):
+    data = await request.json()
+    cursor.execute("DELETE FROM items WHERE id=?", (data["id"],))
+    conn.commit()
+    return True
