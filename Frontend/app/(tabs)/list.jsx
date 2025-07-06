@@ -104,7 +104,7 @@ const List = () => {
 
 return (
     <View style={styles.container}>
-        <Text style={styles.title}>Item Liste</Text>
+        <Text style={styles.title}>Einkaufsliste</Text>
         <TouchableOpacity style= {styles.addButton} onPress={() => setModalVisible(true)}>
             <Text style = {styles.addButtonText}>
                 + Item Hinzufügen
@@ -120,12 +120,24 @@ return (
                 <View style={styles.row} key={item.id}>
                     <View style={styles.collapsibleWrapper}>
                         <Collapsible title={String(item.name)}>
-                            <Text style={styles.listItem}>Name: {item.name}</Text>
-                            <Text style={styles.listItem}>Anzahl: {item.number}</Text>
-                            <Text style={styles.listItem}>Ort: {item.location}</Text>
-                            <Text style={styles.listItem}>Hinzugefügt von: {item.user}</Text>
-                            <View style={{flexDirection: "row", alignItems: "center"}}>
-                                <Text style={styles.listItem}>Schon gekauft: </Text>
+                            <View style={styles.FirstListItem}>
+                                <Text style={styles.ItemName}>Name:</Text>
+                                <Text style={styles.ItemVar}>{item.name}</Text>
+                            </View>
+                            <View style={styles.listItem}>
+                                <Text style={styles.ItemName}>Anzahl:</Text>
+                                <Text style={styles.ItemVar}>{item.number}</Text>
+                            </View>
+                            <View style={styles.listItem}>
+                                <Text style={styles.ItemName}>Ort:</Text>
+                                <Text style={styles.ItemVar}>{item.location}</Text>
+                            </View>
+                            <View style={styles.listItem}>
+                                <Text style={styles.ItemName}>Hinzugefügt von:</Text>
+                                <Text style={styles.ItemVar}>{item.user}</Text>
+                            </View>
+                            <View style={styles.listItem}>
+                                <Text style={styles.ItemName}>Schon gekauft: </Text>
                                 <Checkbox value= {item.isBought} onValueChange={(newVal) => changeIsBoughtStatus(newVal, item.id) }  tintColors={{ true: '#00f', false: '#ccc' }} />
                             </View>
                             
@@ -196,7 +208,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginTop: 30,
         textAlign: 'center',
-        textDecorationLine: 'underline',
     },
     listContainer: {
         width: "100%",
@@ -204,26 +215,28 @@ const styles = StyleSheet.create({
         alignItems: "center", // sicherstellen, dass Items mittig sind
     },
     list: {
-        borderColor: 'rgba(50, 102, 198, 0.5)',
-        borderWidth: 1,
-        borderRadius: 10,
         alignSelf: "stretch",
         width: "100%",
     },
     listItem: {
         color: "white",
+        justifyContent: "space-between",
         fontSize: 20,
         marginVertical: 2,
-        textAlign: "center", // Text zentrieren
-        borderRadius: 10, // optional: für schöneres Aussehen
+        flexDirection: "row",
+        width: "100%",
+        alignItems: "center", // wichtig: damit Text und Checkbox in einer Zeile sind
     },
     row: {
         flexDirection: "row",
         alignItems: "flex-start", // wichtig: damit Button oben bleibt
-        width: "100%",
-        marginVertical: 2,
+        width: "90%",
+        marginVertical:10,
         alignSelf: "stretch",
-        padding: 10,
+        padding: 15 ,
+        backgroundColor: 'rgba(50, 102, 198, 0.2)',
+        borderRadius: 15, // optional: für schöneres Aussehen
+        marginHorizontal: 30, // optional: Abstand zu den Seiten
     },
     collapsibleWrapper: {
         flex: 1, // nimmt den restlichen Platz ein
@@ -305,5 +318,24 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: 'rgba(50, 102, 198, 0.5)',
         padding: 10,
+    },
+    FirstListItem: {
+        color: "white",
+        justifyContent: "space-between",
+        fontSize: 20,
+        marginVertical: 2,
+        flexDirection: "row",
+        width: "100%",
+        borderTopWidth: 2,
+        borderTopColor: "#ffffff",
+    },
+    ItemName: {
+        color: "white",
+        fontSize: 20,
+        fontWeight: "bold",
+    },
+    ItemVar: {
+        color: "white",
+        fontSize: 20,
     }
 })
