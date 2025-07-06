@@ -90,8 +90,8 @@ async function register() {
             <TouchableOpacity style= {{width: "70%", borderRadius: 20, marginTop: 50, backgroundColor: 'rgba(50, 102, 198, 0.5)',}} onPress={() => login()}>
                 <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
-            <TouchableOpacity style= {{width: "70%", borderRadius: 20, marginTop: 50, backgroundColor: 'rgba(50, 65, 198, 0.5)',}}>
-                <Text style={styles.buttonText} onPress={() => register()}>Registrieren</Text>
+            <TouchableOpacity style= {{width: "70%", borderRadius: 20, marginTop: 50, backgroundColor: 'rgba(50, 65, 198, 0.5)',}} onPress={() => register()}>
+                <Text style={styles.buttonText} >Registrieren</Text>
             </TouchableOpacity>
         </ImageBackground>
     </View>
