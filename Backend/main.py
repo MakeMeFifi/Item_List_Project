@@ -11,6 +11,7 @@ cursor.execute("PRAGMA foreign_keys = ON") # Erlaubt die Nutzung von Fremdschlü
 #-----------------------------------------------------------------------------DB erstellung----------------------------------------------------------
 cursor.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, userName TEXT)")
 cursor.execute("CREATE TABLE IF NOT EXISTS items (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT, number INTEGER, userID INTEGER, location TEXT, isBought BOOLEAN DEFAULT 0 , FOREIGN KEY(userID) REFERENCES users(id))")
+cursor.execute("CREATE TABLE IF NOT EXISTS toDo (id INTEGER PRIMARY KEY AUTOINCREMENT,name TEXT, created DATE, deadline DATE, creater INTEGER,commissioner INTEGER, isDone BOOLEAN DEFAULT 0 , FOREIGN KEY(creater) REFERENCES users(id), FOREIGN KEY(commissioner) REFERENCES users(id))")
 conn.commit()
 #-----------------------------------------------------------------------------DB erstellung----------------------------------------------------------
 
