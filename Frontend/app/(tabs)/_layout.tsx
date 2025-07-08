@@ -9,7 +9,7 @@ import { Colors } from '@/constants/Colors';
 //import { useColorScheme } from '@/hooks/useColorScheme';
 
 export default function TabLayout() {
-  const colorScheme = "dark";
+  const colorScheme = "light";
 
   return (
     <Tabs
@@ -29,8 +29,15 @@ export default function TabLayout() {
       <Tabs.Screen
         name="list"
         options={{
-          title: 'Liste',
+          title: 'Einkaufsliste',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="list.bullet" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="ToDo"
+        options={{
+          title: 'To Do Liste',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="checklist" color={color} />,
         }}
       />
       <Tabs.Screen
@@ -38,13 +45,6 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
         }}
       />
     </Tabs>
