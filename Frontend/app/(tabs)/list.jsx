@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(50, 102, 198, 0.5)',
         padding: 10,
         margin: 20,
-        borderRadius: 20,
+        borderRadius: 10,
     },
     addButtonText: {
         color: "white",
