@@ -8,6 +8,7 @@ import {Checkbox} from 'expo-checkbox';
 
 const ToDo = () => {
     const [tasks, setTasks] = useState([])
+    const date = new Date().toLocaleDateString('de-DE')
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Checkliste</Text>

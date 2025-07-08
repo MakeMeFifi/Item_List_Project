@@ -34,7 +34,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="ToDo"
+        name="toDo"
         options={{
           title: 'To Do Liste',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="checklist" color={color} />,
