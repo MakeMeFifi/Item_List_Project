@@ -37,6 +37,18 @@ class ListItem:
         self.isBought = isBought
 
 
+class ToDoItem:
+    def __init__(self, id: int, name: str, created: str, deadline: str, creater: int, commissioner: int, isDone: bool):
+        self.id = id
+        self.name = name
+        self.creater = creater
+        self.commissioner = commissioner
+        self.isDone = isDone
+        DBcreated = created.split("-")  # Split the date string into components
+        self.created = f"{DBcreated[2]}.{DBcreated[1]}.{DBcreated[0]}"
+        DBdeadline = deadline.split("-")    # Split the date string into components
+        self.deadline = f"{DBdeadline[2]}.{DBdeadline[1]}.{DBdeadline[0]}"
+
 def addItem(item : Item):
     cursor.execute("INSERT INTO items (name, number, userID, location) VALUES (?,?,?,?)", (item.name, item.number, item.user, item.location))
     conn.commit()
