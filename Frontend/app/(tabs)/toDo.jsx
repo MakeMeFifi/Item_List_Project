@@ -29,7 +29,7 @@ const ToDo = () => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Checkliste</Text>
-            <Text style={styles.text}>{tasks}</Text>
+            <Text style={styles.text}>heute ist der {date}</Text>
             <TouchableOpacity style={styles.addButton}>
                 <Text style={styles.addButtonText}>
                     + neuen Auftrag hinzufügen
