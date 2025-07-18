@@ -79,7 +79,7 @@ app.add_middleware(
 
 @app.get("/getList")
 async def getList():
-    cursor.execute("SELECT items.id, items.name, items.number, users.userName, items.location, items.isBought FROM items JOin users ON items.userID = users.id")
+    cursor.execute("SELECT items.id, items.name, items.number, users.userName, items.location, items.isBought FROM items JOIN users ON items.userID = users.id")
     list = []
     data = cursor.fetchall()
     for row in data:
@@ -132,3 +132,14 @@ async def changeIsBoughtStatus(request: Request):
     cursor.execute("UPDATE items SET isBought = ? WHERE id = ?", (data["status"], data["id"],))
     conn.commit()
     return True
+
+
+@app.get("/getToDo")
+async def getToDo() :
+    cursor.execute("SELECT toDo.id,toDo.name, toDo.created, toDo.deadline, u1.userName AS creater, u2.userName AS commissioner, toDo.isDone FROM toDo JOIN users u1 ON toDo.creater = u1.id JOIN users u2 ON toDo.commissioner = u2.id")
+    toDo = cursor.fetchall()
+    list = []
+    for row in toDo :
+        item = ToDoItem(row[0],row[1],row[2],row[3],row[4],row[5],row[6])
+        list.append(item)
+    return list
