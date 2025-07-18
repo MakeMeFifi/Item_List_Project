@@ -9,9 +9,27 @@ import {Checkbox} from 'expo-checkbox';
 const ToDo = () => {
     const [tasks, setTasks] = useState([])
     const date = new Date().toLocaleDateString('de-DE')
+
+    function getToDoItems() {
+        fetch("http://192.168.2.35:8000/getToDo")
+        .then(respnse => respnse.json())
+        .then(data => {
+            if(!data) {
+                alert("keine Daten vorhanden")
+                return
+            }else{
+                setTasks(data)
+                return
+            }
+        })
+    }
+
+    useEffect(() => getToDoItems(), [])
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Checkliste</Text>
+            <Text style={styles.text}>{tasks}</Text>
             <TouchableOpacity style={styles.addButton}>
                 <Text style={styles.addButtonText}>
                     + neuen Auftrag hinzufügen
@@ -50,4 +68,10 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         textAlign: "center",
     },
+    text: {
+        textAlign: "center",
+        fontSize: 20,
+        color: "#fff",
+        margin: 10
+    }
 })
