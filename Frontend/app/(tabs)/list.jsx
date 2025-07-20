@@ -169,10 +169,10 @@ return (
                                 <Text style={styles.buttonText}>X</Text>
                             </TouchableOpacity>
                         </View>
-                        <Text style={styles.text}>Hier kannst du ein Item hinzufügen</Text>
-                        <TextInput style={styles.input} placeholder='Name' value={newItem.name} onChange={(event) => setNewItem({...newItem,name: event.nativeEvent.text})}/>
-                        <TextInput style={styles.input} placeholder='Anzahl' value={newItem.number} onChange={(event) => setNewItem({...newItem,number: event.nativeEvent.text})}/>                            
-                        <TextInput style={styles.input} placeholder='Ort' value={newItem.location} onChange={(event) => setNewItem({...newItem,location: event.nativeEvent.text})}/>
+                        <Text style={styles.modalText}>Item hinzufügen</Text>
+                        <TextInput style={styles.input} placeholderTextColor="#fff" placeholder='Name' value={newItem.name} onChange={(event) => setNewItem({...newItem,name: event.nativeEvent.text})}/>
+                        <TextInput style={styles.input} placeholderTextColor="#fff" placeholder='Anzahl' value={newItem.number} onChange={(event) => setNewItem({...newItem,number: event.nativeEvent.text})}/>                            
+                        <TextInput style={styles.input} placeholderTextColor="#fff" placeholder='Ort' value={newItem.location} onChange={(event) => setNewItem({...newItem,location: event.nativeEvent.text})}/>
                         
                         <TouchableOpacity style={styles.button} onPress={() => addItem()}>
                             <Text style={styles.buttonText} >Item hinzufügen</Text>
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     input: {
-        backgroundColor: 'rgba(50, 102, 198, 0.5)',
+        backgroundColor: 'rgba(30, 71, 147, 0.5)',
         margin: 20,
         padding: 10,
         fontSize: 20,
@@ -337,5 +337,12 @@ const styles = StyleSheet.create({
     ItemVar: {
         color: "white",
         fontSize: 20,
+    },
+    modalText: {
+        textAlign: "center",
+        fontSize: 20,
+        color: "#fff",
+        marginTop: 13,
+        fontWeight: "bold"
     }
 })
