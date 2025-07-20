@@ -8,6 +8,7 @@ import {Checkbox} from 'expo-checkbox';
 
 const ToDo = () => {
     const [tasks, setTasks] = useState([])
+    const [modalVisible, setModalVisible] = useState(false)
     const date = new Date().toLocaleDateString('de-DE')
 
     function getToDoItems() {
@@ -30,11 +31,12 @@ const ToDo = () => {
         <View style={styles.container}>
             <Text style={styles.title}>Checkliste</Text>
             <Text style={styles.text}>heute ist der {date}</Text>
-            <TouchableOpacity style={styles.addButton}>
+            <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
                 <Text style={styles.addButtonText}>
                     + neuen Auftrag hinzufügen
                 </Text>
             </TouchableOpacity>
+            {tasks.length === 0 && <Text style={styles.noTaskText}>Gerade keine Aufgaben offen</Text>}
         </View>
     )
 }
@@ -73,5 +75,16 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: "#fff",
         margin: 10
+    },
+    noTaskText: {
+        color: "white",
+        fontSize: 20,
+        margin: 10,
+        textAlign: "center",
+        backgroundColor: 'rgba(50, 102, 198, 0.2)',
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: 'rgba(50, 102, 198, 0.5)',
+        padding: 10,
     }
 })
