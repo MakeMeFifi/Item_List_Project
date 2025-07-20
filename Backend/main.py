@@ -143,3 +143,12 @@ async def getToDo() :
         item = ToDoItem(row[0],row[1],row[2],row[3],row[4],row[5],row[6])
         list.append(item)
     return list
+
+@app.get("/getAllUsers")
+async def getAllUsers() :
+    cursor.execute("SELECT * FROM users")
+    users = cursor.fetchall()
+    list= []
+    for user in users:
+        list.append({"id" : user[0], "name" : user[1]})
+    return list
