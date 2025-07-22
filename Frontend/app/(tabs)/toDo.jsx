@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, TextInput, Button } from 'react-native'
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, TextInput} from 'react-native'
 import { useEffect , useState} from "react"
 import { BlurView } from 'expo-blur';
 import { Collapsible } from '@/components/Collapsible';
@@ -6,15 +6,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import {Checkbox} from 'expo-checkbox';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import {Picker} from '@react-native-picker/picker';
+import ModalSelector from 'react-native-modal-selector'
 const ToDo = () => {
     const [tasks, setTasks] = useState([])
-    const [allUsers, setAllUsers] = useState(["keine User verfügbar"])
+    const [allUsers, setAllUsers] = useState([])
     const [modalVisible, setModalVisible] = useState(false)
-    const [newTask, setNewTask] = useState({name: "", beauftragter: "", deadline: ""})
+    const [newTask, setNewTask] = useState({name: "", beauftragter: "", deadline: "kein Datum ausgewählt"})
     const [isDatePickerVisible, setIsDatePickerVisible] = useState(false)
-    const [selectedUser, setSelectedUser] = useState("")
     const date = new Date().toLocaleDateString('de-DE')
+    const [choosedUser, setChoosedUser] = useState("")
 
     function getToDoItems() {
         fetch("http://192.168.2.35:8000/getToDo")
@@ -34,19 +34,66 @@ const ToDo = () => {
         fetch("http://192.168.2.35:8000/getAllUsers")
         .then(response => response.json())
         .then(data => {
-            if(!data) {
-                setAllUsers(["Keine Users verfügbar"])
+            if(!data || data.length === 0) {
+                setAllUsers([{ id: "none", name: "Keine Benutzer verfügbar" }])
                 return
             }else {
                 setAllUsers(data)
-                setSelectedUser(data[0].name)
                 return
+            }
+        })
+    }
+
+    function setDate(newDate) {
+        let splittetNewDate = newDate.split(".")
+        let splittetDate = date.split(".")
+        if (parseInt(splittetNewDate[0]) <= parseInt(splittetDate[0]) || parseInt(splittetNewDate[1]) < parseInt(splittetDate[1]) || parseInt(splittetNewDate[2]) < parseInt(splittetDate[2])) {
+            alert("bitte wähle ein Datum in der Zukunft")
+            return
+        }else{
+            setNewTask({...newTask,deadline: newDate})
+        }
+    }
+
+    function setPerson(id,name) {
+        setChoosedUser(name)
+        setNewTask({...newTask, beauftragter: id})
+    }
+
+    async function addTask() {
+        const id = await AsyncStorage.getItem("id")
+        fetch("http://192.168.2.35:8000/setNewTask", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "name" : newTask.name,
+                "deadline": newTask.deadline,
+                "creater" : id,
+                "PersonToDo" : newTask.beauftragter
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(!data) {
+                alert("ein Fehler ist Passiert, bitte versuchen sie es erneut")
+                return
+            }
+            else {
+                alert("Aufgabe erfolgreich hinzugefügt!")
+                setModalVisible(false)
             }
         })
     }
 
     useEffect(() => getToDoItems(), [])
     useEffect(() => getAllUsers(), [])
+
+    const userData = allUsers.map(user => ({            //bereitet ein object vor mit allen usern
+        label: user.name,
+        key: user.id,
+    }))
 
     return (
         <View style={styles.container}>
@@ -87,24 +134,80 @@ const ToDo = () => {
                         <Text style={styles.modalTitle}>
                             Neue Aufgabe hinzufügen
                         </Text>
-                        <TextInput style={styles.input} placeholderTextColor="#fff" placeholder='Name' />
-                        <Picker
-                            selectedValue={selectedUser}
-                            onValueChange={(userID) => setSelectedUser(userID)}>
-                            {allUsers.map((user,index) => (
-                                <Picker.Item key={index} label={user.name} value={user.id}/>
-                            ))}
-                        </Picker>
-                        <TextInput style={styles.input} placeholderTextColor="#fff" placeholder='Wer?'/>                            
-                        <View>
-                            <Button title="Show Date Picker" onPress={() => setIsDatePickerVisible(true)} />
+                        <TextInput style={styles.input} placeholderTextColor="#fff" placeholder='Welche Aufgabe?' value={newTask.name} onChange={(event) => setNewTask({...newTask, name : event.nativeEvent.text})} />
+                        <ModalSelector
+                        data={userData}
+                        initValue="Person auswählen"
+                        onChange={(option) => setPerson(option.key,option.label)}
+                        selectStyle={{
+                            alignSelf: "stretch",
+                            backgroundColor: 'rgba(50, 102, 198, 0.5)',
+                            margin: 20,
+                            padding: 10,
+                            fontSize: 20,
+                            color: "#fff",
+                            minWidth: "88%",
+                            borderRadius: 10,
+                            borderWidth: 0
+                        }}
+                        selectTextStyle={{
+                            color: '#fff',
+                            fontSize: 20,
+                            textAlign: 'center',
+                            fontWeight: "bold"
+                        }}
+                        optionStyle={{
+                            backgroundColor: 'rgba(50, 102, 198, 0.2)', // dunkles Design wie bei dir
+                            padding: 15,
+                            borderBottomWidth: 1,
+                            borderBottomColor: 'rgba(255,255,255,0.1)',
+                        }}
+                        optionTextStyle={{
+                            color: '#fff',
+                            fontSize: 16,
+                        }}
+                        cancelStyle={{
+                            backgroundColor: 'rgba(30, 71, 147, 0.3)',
+                            borderRadius: 10,
+                            marginTop: 10,
+                        }}
+                        cancelTextStyle={{
+                            color: '#fff',
+                            textAlign: 'center',
+                            paddingVertical: 10,
+                            fontWeight: 'bold',
+                        }}
+                         // Style des Auswahlfensters (Dropdown):
+                        optionContainerStyle={{
+                            backgroundColor: 'rgba(14, 40, 88, 1)',
+                            borderRadius: 10,
+                            marginHorizontal: 20,
+                        }}
+                        backdropPressToClose={true}
+                        />  
+                        <Text style={styles.infoText}>
+                            Ausgewählt Person: {choosedUser}
+                        </Text>                 
+                            <TouchableOpacity style= {styles.addButton} onPress={() => setIsDatePickerVisible(true)} >
+                                <Text style={styles.buttonText}>
+                                    Datum hinzufügen
+                                </Text>
+                            </TouchableOpacity>
                             <DateTimePickerModal
                             isVisible={isDatePickerVisible}
                             mode="date"
-                            onConfirm={() => setNewTask({...newTask,deadline: date.toLocaleDateString("de-DE")})}
+                            onConfirm={(date) => setDate(date.toLocaleDateString("de-DE"))}
                             onCancel={() =>setIsDatePickerVisible(false)}
-                        />
-                        </View>
+                            />
+                            
+                        <Text style={styles.infoText}>
+                            Dein ausgewähltes Datum ist der: {newTask.deadline}
+                        </Text>
+                        <TouchableOpacity style={styles.addButton}>
+                            <Text style={styles.buttonText} onPress={() => addTask()}>
+                                + hinzufügen
+                            </Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
@@ -129,11 +232,12 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     addButton: {
-        alignSelf: "stretch",
         backgroundColor: 'rgba(50, 102, 198, 0.5)',
         padding: 10,
         margin: 20,
         borderRadius: 10,
+        width: "88%",
+        minWidth: "88%"
     },
     addButtonText: {
         color: "white",
@@ -145,7 +249,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontSize: 20,
         color: "#fff",
-        margin: 10
+        margin: 10,
     },
     noTaskText: {
         color: "white",
@@ -203,5 +307,11 @@ const styles = StyleSheet.create({
         color: "white",
         minWidth: "80%",
         borderRadius: 20,
+        alignSelf: "stretch"
     },
+    infoText: {
+        textAlign: "center",
+        fontSize: 13,
+        color: "#fff"
+    }
 })
