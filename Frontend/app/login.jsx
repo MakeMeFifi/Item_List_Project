@@ -9,6 +9,10 @@ LogBox.ignoreLogs([
   'Text strings must be rendered within a <Text> component.',
 ]);
 
+LogBox.ignoreLogs([
+  'A props object containing a "key" prop is being spread into JSX',
+]);
+
 const Login = () => {
     const [userName, setUserName] = useState("")
     const navigation = useNavigation()
