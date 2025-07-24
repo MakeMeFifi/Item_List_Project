@@ -61,6 +61,10 @@ const ToDo = () => {
     }
 
     async function addTask() {
+        if(newTask.name === "" || newTask.beauftragter === "" || newTask.deadline === "kein Datum ausgewählt"){
+            alert("bitte Fülle die Felder aus")
+            return
+        }
         const id = await AsyncStorage.getItem("id")
         fetch("http://192.168.2.35:8000/setNewTask", {
             method: "PUT",
