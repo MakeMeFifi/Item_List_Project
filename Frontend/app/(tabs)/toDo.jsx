@@ -1,10 +1,9 @@
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, TextInput} from 'react-native'
 import { useEffect , useState} from "react"
 import { BlurView } from 'expo-blur';
-import { Collapsible } from '@/components/Collapsible';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconSymbol } from "@/components/ui/IconSymbol";
-import {Checkbox} from 'expo-checkbox';
+import BouncyCheckbox from "react-native-bouncy-checkbox";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import ModalSelector from 'react-native-modal-selector'
 const ToDo = () => {
@@ -15,6 +14,7 @@ const ToDo = () => {
     const [isDatePickerVisible, setIsDatePickerVisible] = useState(false)
     const date = new Date().toLocaleDateString('de-DE')
     const [choosedUser, setChoosedUser] = useState("")
+    const [isChecked, setIsChecked] = useState(false)
 
     function getToDoItems() {
         fetch("http://192.168.2.35:8000/getToDo")
@@ -93,6 +93,11 @@ const ToDo = () => {
         })
     }
 
+    function changeisDoneStatus(newStat,task) {
+        setIsChecked(newStat)
+
+    }
+
     useEffect(() => getToDoItems(), [])
     useEffect(() => getAllUsers(), [])
 
@@ -111,6 +116,25 @@ const ToDo = () => {
                 </Text>
             </TouchableOpacity>
             {tasks.length === 0 && <Text style={styles.noTaskText}>Gerade keine Aufgaben offen</Text>}
+            <FlatList
+                data={tasks}
+                style={styles.list}
+                contentContainerStyle={styles.listContainer}
+                keyExtractor={task => task.id?.toString() || task.name}
+                renderItem={({task}) => (
+                    <View style={styles.row}>
+                        <BouncyCheckbox
+                        size={30}
+                        fillColor="#3B82F6" // Blau (wie dein Button oben)
+                        unfillColor="transparent"
+                        iconStyle={styles.iconStyle}
+                        innerIconStyle={styles.innerIconStyle}
+                        isChecked={false}
+                        onPress={() => setIsChecked(!isChecked)}        //TODO:: Muss geändert werden zu ner localen  Val
+                    />
+                    </View>
+                )}
+            />
 
 
 
@@ -319,5 +343,25 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontSize: 13,
         color: "#fff"
-    }
+    },
+        listContainer: {
+        width: "100%",
+        flexDirection: "column",
+        alignItems: "center", // sicherstellen, dass Items mittig sind
+    },
+    list: {
+        alignSelf: "stretch",
+        width: "100%",
+    },
+    row: {
+        flexDirection: "row",
+        alignItems: "flex-start", // wichtig: damit Button oben bleibt
+        width: "90%",
+        marginVertical:10,
+        alignSelf: "stretch",
+        padding: 15 ,
+        backgroundColor: 'rgba(50, 102, 198, 0.2)',
+        borderRadius: 15, // optional: für schöneres Aussehen
+        marginHorizontal: 30, // optional: Abstand zu den Seiten
+    },
 })
