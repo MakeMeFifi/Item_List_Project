@@ -75,7 +75,8 @@ const ToDo = () => {
                 "name" : newTask.name,
                 "deadline": newTask.deadline,
                 "creater" : id,
-                "PersonToDo" : newTask.beauftragter
+                "PersonToDo" : newTask.beauftragter,
+                "date" : date
             })
         })
         .then(response => response.json())
@@ -86,6 +87,7 @@ const ToDo = () => {
             }
             else {
                 alert("Aufgabe erfolgreich hinzugefügt!")
+                getToDoItems()
                 setModalVisible(false)
             }
         })
