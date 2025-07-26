@@ -60,6 +60,12 @@ def deleteAllData():
     conn.commit()
     return True
 
+def switchDateFormate(date):
+    split= date.split(".")
+    newDate= split[2]+"-"+split[1]+"-"+split[0]
+    return newDate
+
+
 app = FastAPI()
 
 origins = [
@@ -152,3 +158,12 @@ async def getAllUsers() :
     for user in users:
         list.append({"id" : user[0], "name" : user[1]})
     return list
+
+@app.put("/setNewTask")
+async def setNewTask(request: Request) :
+    data = await request.json()
+    date = switchDateFormate(data["date"])
+    deadline = switchDateFormate(data["deadline"])
+    cursor.execute("INSERT INTO toDO (name, created, deadline, creater ,commissioner) VALUES (?,?,?,?,?)", (data["name"], date, deadline, data["creater"], data["PersonToDo"]))
+    conn.commit()
+    return True
