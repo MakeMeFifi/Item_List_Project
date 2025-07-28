@@ -167,3 +167,10 @@ async def setNewTask(request: Request) :
     cursor.execute("INSERT INTO toDO (name, created, deadline, creater ,commissioner) VALUES (?,?,?,?,?)", (data["name"], date, deadline, data["creater"], data["PersonToDo"]))
     conn.commit()
     return True
+
+@app.post("/changeIsDoneStatus")
+async def changeIsDoneStatus(request: Request):
+    data = await request.json()
+    cursor.execute("UPDATE toDo SET isDone= ? WHERE toDo.id = ?", (data["status"],data["id"]))
+    conn.commit()
+    return True
