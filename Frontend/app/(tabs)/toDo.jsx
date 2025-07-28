@@ -14,7 +14,6 @@ const ToDo = () => {
     const [isDatePickerVisible, setIsDatePickerVisible] = useState(false)
     const date = new Date().toLocaleDateString('de-DE')
     const [choosedUser, setChoosedUser] = useState("")
-    const [isChecked, setIsChecked] = useState(false)
 
     function getToDoItems() {
         fetch("http://192.168.2.35:8000/getToDo")
@@ -93,12 +92,26 @@ const ToDo = () => {
         })
     }
 
-    function changeisDoneStatus(newStat,task) {
-        setIsChecked(newStat)
-
+    async function changeisDoneStatus(newStat,task) {
+        let response = await fetch("http://192.168.2.35:8000/changeIsDoneStatus",{
+            method: "POST",
+            header: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "id": task,
+                "status" : newStat
+            })
+        })
+        let data = await response.json()
+        if(data === true) {
+            getToDoItems()
+        }else{
+            alert("es ist ein fehler passiert, bitte versuchen sie es erneut")
+        }
     }
 
-    useEffect(() => getToDoItems(), [])
+    useEffect(() => {getToDoItems()}, [])
     useEffect(() => getAllUsers(), [])
 
     const userData = allUsers.map(user => ({            //bereitet ein object vor mit allen usern
@@ -121,17 +134,28 @@ const ToDo = () => {
                 style={styles.list}
                 contentContainerStyle={styles.listContainer}
                 keyExtractor={task => task.id?.toString() || task.name}
-                renderItem={({task}) => (
+                renderItem={({item}) => (
                     <View style={styles.row}>
-                        <BouncyCheckbox
-                        size={30}
-                        fillColor="#3B82F6" // Blau (wie dein Button oben)
-                        unfillColor="transparent"
-                        iconStyle={styles.iconStyle}
-                        innerIconStyle={styles.innerIconStyle}
-                        isChecked={false}
-                        onPress={() => setIsChecked(!isChecked)}        //TODO:: Muss geändert werden zu ner localen  Val
-                    />
+                        <View style={styles.isDoneField}>
+                            <BouncyCheckbox
+                            size={30}
+                            fillColor="#3B82F6" // Blau (wie dein Button oben)
+                            unfillColor="transparent"
+                            iconStyle={styles.iconStyle}
+                            innerIconStyle={styles.innerIconStyle}
+                            isChecked={item.isDone}
+                            onPress={() => changeisDoneStatus(!item.isDone,item.id)}
+                            />
+                        </View>
+                        <View style={styles.nameField}>
+                            <Text style={styles.itemText}>{item.name}</Text>
+                        </View>
+                        <View style={styles.deleteField}>
+                            <TouchableOpacity style={styles.deleteButton}>
+                                <IconSymbol name="trash" size= {25} color= "red"/>
+                            </TouchableOpacity>
+                        </View>
+                        
                     </View>
                 )}
             />
@@ -355,7 +379,8 @@ const styles = StyleSheet.create({
     },
     row: {
         flexDirection: "row",
-        alignItems: "flex-start", // wichtig: damit Button oben bleibt
+        alignItems: "center", // wichtig: damit Button oben bleibt
+        maxWidth: "90%",
         width: "90%",
         marginVertical:10,
         alignSelf: "stretch",
@@ -363,5 +388,29 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(50, 102, 198, 0.2)',
         borderRadius: 15, // optional: für schöneres Aussehen
         marginHorizontal: 30, // optional: Abstand zu den Seiten
+    },
+    isDoneField: {
+        flex: 1,
+    },
+    nameField: {
+        flex:4,
+    },
+    deleteField: {
+        flex: 1,
+    },
+    itemText: {
+        textAlign: "justify",
+        fontSize: 20,
+        color: "#fff",
+        margin: 10,
+    },
+    deleteButton: {
+        borderWidth: 2,
+        borderColor: 'rgba(255, 0, 0, 0.7)',
+        borderRadius: 10,
+        height:35,
+        width:35,
+        alignItems: "center",
+        justifyContent: "center",
     },
 })
