@@ -174,3 +174,10 @@ async def changeIsDoneStatus(request: Request):
     cursor.execute("UPDATE toDo SET isDone= ? WHERE toDo.id = ?", (data["status"],data["id"]))
     conn.commit()
     return True
+
+@app.delete("/deleteToDo")
+async def deleteToDo(request: Request):
+    data = await request.json()
+    cursor.execute("DELETE FROM toDo WHERE toDo.id = ?",(data["id"],))
+    conn.commit()
+    return True
