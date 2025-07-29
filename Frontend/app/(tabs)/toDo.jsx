@@ -46,11 +46,29 @@ const ToDo = () => {
     function setDate(newDate) {
         let splittetNewDate = newDate.split(".")
         let splittetDate = date.split(".")
-        if (parseInt(splittetNewDate[0]) <= parseInt(splittetDate[0]) || parseInt(splittetNewDate[1]) < parseInt(splittetDate[1]) || parseInt(splittetNewDate[2]) < parseInt(splittetDate[2])) {
+        let sameMonth = false
+        let sameYear = false
+        if(parseInt(splittetNewDate[2]) >= parseInt(splittetDate[2])){
+            if(parseInt(splittetNewDate[2]) === parseInt(splittetDate[2])){
+                sameYear = true
+            }
+            if(parseInt(splittetNewDate[1]) >= parseInt(splittetDate[1]) || !sameYear){
+                if(parseInt(splittetNewDate[1]) === parseInt(splittetDate[1])) {
+                    sameMonth = true
+                }
+                if(parseInt(splittetNewDate[0]) >= parseInt(splittetDate[0]) || !sameMonth){
+                    setNewTask({...newTask,deadline: newDate})
+                }else{
+                    alert("bitte wähle ein Datum in der Zukunft")
+                    return
+                }
+            }else{
+                alert("bitte wähle ein Datum in der Zukunft")
+                return
+            }
+        }else{
             alert("bitte wähle ein Datum in der Zukunft")
             return
-        }else{
-            setNewTask({...newTask,deadline: newDate})
         }
     }
 
