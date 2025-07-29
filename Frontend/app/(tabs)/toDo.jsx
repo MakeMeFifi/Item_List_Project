@@ -148,7 +148,17 @@ const ToDo = () => {
                             />
                         </View>
                         <View style={styles.nameField}>
-                            <Text style={styles.itemText}>{item.name}</Text>
+                            <Text style={item.isDone ? styles.doneItemText : styles.itemText}>{item.name}</Text>
+                            <View style={styles.userInformationsArea}>
+                                <Text style={styles.userText}> 
+                                    <IconSymbol name="person" size={15} color="gray"/>Zugewiesen an: {'\n'}
+                                    {item.commissioner}
+                                </Text>
+                                <Text style={date >= item.deadline ? styles.deadlineIsDue : styles.userText}>
+                                    <IconSymbol name="calendar" size={15} color={date >= item.deadline ? "red" : "gray"}/>Frist:{"\n"}
+                                    {item.deadline}
+                                </Text>
+                            </View>
                         </View>
                         <View style={styles.deleteField}>
                             <TouchableOpacity style={styles.deleteButton}>
@@ -166,7 +176,7 @@ const ToDo = () => {
 
             {/* BlurView overlay when modal is visible */}
             {modalVisible && (
-                <BlurView intensity={100} tint="dark" style={StyleSheet.absoluteFill} />
+                <BlurView intensity={1000} tint="dark" style={StyleSheet.absoluteFill} />
             )}
             {/* Modal should be rendered after BlurView so it's above the blur */}
             <Modal
@@ -200,6 +210,7 @@ const ToDo = () => {
                             padding: 10,
                             fontSize: 20,
                             color: "#fff",
+                            fontWeight: "bold",
                             minWidth: "88%",
                             borderRadius: 10,
                             borderWidth: 0
@@ -379,7 +390,7 @@ const styles = StyleSheet.create({
     },
     row: {
         flexDirection: "row",
-        alignItems: "center", // wichtig: damit Button oben bleibt
+        alignItems: "center",
         maxWidth: "90%",
         width: "90%",
         marginVertical:10,
@@ -394,15 +405,16 @@ const styles = StyleSheet.create({
     },
     nameField: {
         flex:4,
+        flexDirection: "column",
     },
     deleteField: {
         flex: 1,
     },
     itemText: {
-        textAlign: "justify",
+        textAlign: "left",
         fontSize: 20,
         color: "#fff",
-        margin: 10,
+        margin: 5,
     },
     deleteButton: {
         borderWidth: 2,
@@ -412,5 +424,24 @@ const styles = StyleSheet.create({
         width:35,
         alignItems: "center",
         justifyContent: "center",
+    },
+    userText: {
+        fontSize: 15,
+        color: "gray",
+    },
+    userInformationsArea: {
+        flexDirection: "row",
+        justifyContent: "space-around"
+    },
+    deadlineIsDue: {
+        fontSize: 15,
+        color: "red",
+    },
+    doneItemText: {
+        textAlign: "left",
+        fontSize: 20,
+        color: "gray",
+        margin: 5,
+        textDecorationLine: "line-through"
     },
 })
