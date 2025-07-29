@@ -56,7 +56,7 @@ const ToDo = () => {
                 if(parseInt(splittetNewDate[1]) === parseInt(splittetDate[1])) {
                     sameMonth = true
                 }
-                if(parseInt(splittetNewDate[0]) >= parseInt(splittetDate[0]) || !sameMonth){
+                if(parseInt(splittetNewDate[0]) > parseInt(splittetDate[0]) || !sameMonth || !sameYear){
                     setNewTask({...newTask,deadline: newDate})
                 }else{
                     alert("bitte wähle ein Datum in der Zukunft")
