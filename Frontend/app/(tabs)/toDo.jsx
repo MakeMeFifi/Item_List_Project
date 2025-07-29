@@ -111,7 +111,29 @@ const ToDo = () => {
         }
     }
 
-    useEffect(() => {getToDoItems()}, [])
+    async function deleteToDo(id) {
+        let response = await fetch("http://192.168.2.35:8000/deleteToDo",{
+            method: "DELETE",
+            header: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "id": id
+            })
+        })
+        let data = await response.json()
+        if(data === true){
+            
+            alert("Auftrag erfolgreich gelöscht")
+            getToDoItems()
+            return
+        }else{
+            alert("ein fehler ist passiert, bitte versuche es erneut")
+            return
+        }
+    }
+
+    useEffect(() => getToDoItems(), [])
     useEffect(() => getAllUsers(), [])
 
     const userData = allUsers.map(user => ({            //bereitet ein object vor mit allen usern
@@ -161,7 +183,7 @@ const ToDo = () => {
                             </View>
                         </View>
                         <View style={styles.deleteField}>
-                            <TouchableOpacity style={styles.deleteButton}>
+                            <TouchableOpacity style={styles.deleteButton} onPress={() => deleteToDo(item.id)}>
                                 <IconSymbol name="trash" size= {25} color= "red"/>
                             </TouchableOpacity>
                         </View>
