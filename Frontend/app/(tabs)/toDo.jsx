@@ -30,7 +30,7 @@ const ToDo = () => {
     }
 
     function getAllUsers() {
-        fetch("http://192.168.2.35:8000/getAllUsers")
+        fetch("http://192.168.178.34:8000/getAllUsers")
         .then(response => response.json())
         .then(data => {
             if(!data || data.length === 0) {
@@ -83,7 +83,7 @@ const ToDo = () => {
             return
         }
         const id = await AsyncStorage.getItem("id")
-        fetch("http://192.168.2.35:8000/setNewTask", {
+        fetch("http://192.168.178.34:8000/setNewTask", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -111,7 +111,7 @@ const ToDo = () => {
     }
 
     async function changeisDoneStatus(newStat,task) {
-        let response = await fetch("http://192.168.2.35:8000/changeIsDoneStatus",{
+        let response = await fetch("http://192.168.178.34:8000/changeIsDoneStatus",{
             method: "POST",
             header: {
                 "Content-Type": "application/json"
@@ -130,7 +130,7 @@ const ToDo = () => {
     }
 
     async function deleteToDo(id) {
-        let response = await fetch("http://192.168.2.35:8000/deleteToDo",{
+        let response = await fetch("http://192.168.178.34:8000/deleteToDo",{
             method: "DELETE",
             header: {
                 "Content-Type": "application/json"

@@ -21,7 +21,7 @@ const Login = () => {
         if(userName === "") {
             return
         }
-        fetch("http://192.168.2.35:8000/login", {
+        fetch("http://192.168.178.34:8000/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -58,7 +58,7 @@ async function register() {
     if(userName === "") {
         return
     }
-    fetch("http://192.168.2.35:8000/putUser", {
+    fetch("http://192.168.178.34:8000/putUser", {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"

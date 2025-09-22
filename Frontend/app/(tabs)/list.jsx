@@ -13,7 +13,7 @@ const List = () => {
 
     // Fetch the list data from the server
     function fetchListData() {
-        fetch("http://192.168.2.35:8000/getList", )
+        fetch("http://192.168.178.34:8000/getList", )
         .then(response => response.json())
         .then(data => {
             if(!data) {
@@ -31,7 +31,7 @@ const List = () => {
             return
         }
         const id = await AsyncStorage.getItem("id")
-        fetch("http://192.168.2.35:8000/put", {
+        fetch("http://192.168.178.34:8000/put", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -57,7 +57,7 @@ const List = () => {
     }
 
     function deleteItem(id) {
-        fetch("http://192.168.2.35:8000/deleteItem", {
+        fetch("http://192.168.178.34:8000/deleteItem", {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json"
@@ -79,7 +79,7 @@ const List = () => {
     }
 
     function changeIsBoughtStatus(newVal, id) {
-        fetch("http://192.168.2.35:8000/changeIsBoughtStatus", {
+        fetch("http://192.168.178.34:8000/changeIsBoughtStatus", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
